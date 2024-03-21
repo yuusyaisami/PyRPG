@@ -14,3 +14,5 @@ class GraphicPathStruct:
 graphicPathsById = []
 # グラフィックパスの辞書に登録したい画像をIDとAngleをキーに保存する
 graphicPathsById.append(GraphicPathStruct(up="sub1_up.png", down="sub1_down.png", left="sub1_left.png", right_path="sub1_right.png"))
+graphicPathsById.append(GraphicPathStruct(up="grass.png"))
+graphicPathsById.append(GraphicPathStruct(up="forest.png"))
