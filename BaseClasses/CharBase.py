@@ -21,11 +21,13 @@ class Angle:
         else:
             return str(self.value)
 
-class CharBase:
+class CharBase: # NPCなどのentityの基底クラス
     def __init__(self, x, y, angle, name=None):
         self.world_pos = Position(x, y) # world position
         self.screen_pos = Position(0, 0) # draw時に入力する
         self.float_pos = Position(0, 0) # float position
+
+        self.move_distance = 0
         self.size = 1
         self.angle = Angle(angle)
         self.stute = "idol" # キャラクターの状態を入力 idol:通常, dead:死んでいる,None :何もない, move:移動中, attack:攻撃中
@@ -77,10 +79,11 @@ class CharBase:
                 flag_collision = ((flag_px and flag_py) or (flag_px_s and flag_py) or (flag_px and flag_py_s) or (flag_px_s and flag_py_s))
                 if not flag_collision:
                     self.world_pos.x = int(self.float_pos.x)
-                    return # 衝突しなかった 
+                    return "move" # 衝突しなかった 
         # 衝突した
         self.float_pos.y = tmpy
         self.float_pos.x = tmpx
+        return "stop" # 
     def __collision_block(self, map, tx, ty):
         if self.angle.value > 0 and self.angle.value < 90:
             flag_up_left = map[int(self.float_pos.y)][self.float_pos.x].type != "wall"
@@ -175,7 +178,13 @@ class CharBase:
     def move_to_block(self, map, entities, angle=-1):
         if angle != -1: # -1以外なら角度を入力する
             self.angle.value = angle
-        
+        self.stute = "move"
+        self.move_distance += 1
+    def update(self, map, entities):
+        if self.stute == "move" and self.move_distance > 0:
+            flag = self.move(map, entities)
+            if flag == "move":
+                self.move_distance -= self.speed
     def getPosFloat(self):
         """Returns the float position and size."""
         return self.float_pos.x, self.float_pos.y, self.size 
